@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
         i++;
 	}
     dictSize = i;
+    din.close();
 
     strcpy(fname, argv[1]);
 	printf("\n");
@@ -78,60 +79,27 @@ int main(int argc, char *argv[])
 
 int spell_check(char *xword, char dict[][50], int dictSize)
 {
-	//Open the dictionary file
-	//ifstream din(dictname);
-	//if (din.fail()) {
-	//	printf("Dictionary file failed to open!\n\n");
-	//	exit(1);
-	//}
-	int found = search_for_word(xword, dict, dictSize);
-	if (found != 1) {
-		printf("  Misspelled: %s\n", xword);
-	} else {
-		//Nothing to do here yet.
-	}
-	//din.close();
-	if (found != 0)
-		return 0;
-	else
-		return 1;
+    if (search_for_word(xword, dict, dictSize)) {
+        return 0;
+    } else {
+        printf("  Misspelled: %s\n", xword);
+        return 1;
+    }
 }
 
 void convert_to_lower(char *str)
 {
-    int slen = strlen(str);
-    for (int i=1; i<=slen; i++)
-        str[i-1] = (char)tolower(str[i-1]);
+    int limit = strlen(str) - 1;
+    for (int i=0; i <= limit; i++)
+        str[i] = (char)tolower(str[i]);
 }
 
 void check_last_character(char *str)
 {
-	//Strip comma, period, colon, semi-colon from end of a string.
-	char *p = str;
-	//First, go all the way to the end of the string.
-	while (*p)
-		++p;
-	--p;
-	//Go backwards looking for a comma.
-	while (p >= str && (*p == ',')) {
-		*p = '\0';
-		--p;
-	}
-	//Go backwards looking for a period.
-	while (p >= str && (*p == '.')) {
-		*p = '\0';
-		--p;
-	}
-	//Go backwards looking for a colon.
-	while (p >= str && (*p == ':')) {
-		*p = '\0';
-		--p;
-	}
-	//Go backwards looking for a semi-colon.
-	while (p >= str && (*p == ';')) {
-		*p = '\0';
-		--p;
-	}
+    // If the last character is a comma, period, colon, or semicolon, remove it
+    char *p = str + strlen(str) - 1;
+    if (*p == ',' || *p == '.' || *p == ':' || *p == ';')
+        *p = '\0';
 }
 
 int search_for_word(char *word, char dict[][50], int dictSize)
@@ -140,35 +108,16 @@ int search_for_word(char *word, char dict[][50], int dictSize)
 	//         1 = word found.
 	//
 	check_last_character(word);
-	//
-	//Go to the top of the dictionary file.
-	//fin.clear();
-	//fin.seekg(0, fin.beg);
-	//Now search through the whole file looking for the word.
-	//Search top to bottom.
-//	char line[256];
-	int found = 0;
-	//fin >> line;
 
-//    while (!fin.eof()) {
-//        // Convert word to lower case (dict is already lower case)
-//        convert_to_lower(word);
-//		//Compare words for spelling match.
-//		if (strlen(line) > 0)
-//			if (strcmp(line, word) == 0)
-//				found = found + 1;
-//		fin >> line;
-//	}
-
+    // Convert word to lower case
     convert_to_lower(word);
+
+    // Check word against dictionary array
     for (int i = 0; i < dictSize; i++)
         if (strcmp(dict[i], word) == 0)
-            found = found + 1;
+           return 1;
 
-    if (found > 0)
-        return 1;
-    else
-        return 0;
+    return 0;
 }
 
 
