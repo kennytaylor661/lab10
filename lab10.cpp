@@ -20,15 +20,14 @@
 #include <cstring>
 #include <cctype>
 #include <fstream>
+#include <iostream>
+
 using namespace std;
-enum {
-	LOWER,
-	UPPER
-};
+
 //do not modify
 const char dictname[] = "/usr/share/dict/cracklib-small";
-int spell_check(char *text);
-int search_for_word(ifstream &din, char *xword);
+int spell_check(char *, char[][50], int);
+int search_for_word(char*, char [][50], int);
 
 int main(int argc, char *argv[])
 {
@@ -36,8 +35,26 @@ int main(int argc, char *argv[])
 		printf("\nUsage: %s <file name>\n\n", argv[0]);
 		return 0;
 	}
-	char fname[256];
-	strcpy(fname, argv[1]);
+	
+    int i = 0, dictSize;
+    char fname[256];
+	char dict[100000][50], line[256];
+   
+    // Read dictionary into an array
+    ifstream din(dictname);
+    if (din.fail()) {
+        printf("Dictionary file failed to open!\n\n");
+        exit(1);
+    }
+    din >> line; 
+    while (!din.eof()) {
+        strcpy(dict[i], line);
+        din >> line;
+        i++;
+	}
+    dictSize = i;
+
+    strcpy(fname, argv[1]);
 	printf("\n");
 	printf("Lab-10 program optimization.\n");
 	printf("spell-check this file: **%s**\n", fname);
@@ -50,7 +67,7 @@ int main(int argc, char *argv[])
 	char word[256];
 	fin >> word;
 	while (!fin.eof()) {
-		nMisspelled += spell_check(word);
+		nMisspelled += spell_check(word, dict, dictSize);
 		fin >> word;
 	}
 	fin.close();
@@ -59,41 +76,32 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-int spell_check(char *xword)
+int spell_check(char *xword, char dict[][50], int dictSize)
 {
 	//Open the dictionary file
-	ifstream din(dictname);
-	if (din.fail()) {
-		printf("Dictionary file failed to open!\n\n");
-		exit(1);
-	}
-	int found = search_for_word(din, xword);
+	//ifstream din(dictname);
+	//if (din.fail()) {
+	//	printf("Dictionary file failed to open!\n\n");
+	//	exit(1);
+	//}
+	int found = search_for_word(xword, dict, dictSize);
 	if (found != 1) {
 		printf("  Misspelled: %s\n", xword);
 	} else {
 		//Nothing to do here yet.
 	}
-	din.close();
+	//din.close();
 	if (found != 0)
 		return 0;
 	else
 		return 1;
 }
 
-void convert_to_a_case(int case_flag, char *str)
+void convert_to_lower(char *str)
 {
-	//convert a c-string to a case
-	//case_flag: 0 = lower
-	//           1 = upper
-	int slen = strlen(str);
-	for (int i=1; i<=slen; i++) {
-		if (case_flag == 0)
-			str[i-1] = (char)tolower(str[i-1]);
-	}
-	for (int i=1; i<=slen; i++) {
-		if (case_flag == 1)
-			str[i-1] = (char)toupper(str[i-1]);
-	}
+    int slen = strlen(str);
+    for (int i=1; i<=slen; i++)
+        str[i-1] = (char)tolower(str[i-1]);
 }
 
 void check_last_character(char *str)
@@ -126,7 +134,7 @@ void check_last_character(char *str)
 	}
 }
 
-int search_for_word(ifstream &fin, char *word)
+int search_for_word(char *word, char dict[][50], int dictSize)
 {
 	//returns: 0 = word not found.
 	//         1 = word found.
@@ -134,27 +142,33 @@ int search_for_word(ifstream &fin, char *word)
 	check_last_character(word);
 	//
 	//Go to the top of the dictionary file.
-	fin.clear();
-	fin.seekg(0, fin.beg);
+	//fin.clear();
+	//fin.seekg(0, fin.beg);
 	//Now search through the whole file looking for the word.
 	//Search top to bottom.
-	char line[256];
+//	char line[256];
 	int found = 0;
-	fin >> line;
-	while (!fin.eof()) {
-		//Make sure both words are the same case.
-		//convert_to_a_case(LOWER, line);     // Dict already lower case
-		convert_to_a_case(LOWER, word);
-		//Compare words for spelling match.
-		if (strlen(line) > 0)
-			if (strcmp(line, word) == 0)
-				found = found + 1;
-		fin >> line;
-	}
-	if (found > 0)
-		return 1;
-	else
-		return 0;
+	//fin >> line;
+
+//    while (!fin.eof()) {
+//        // Convert word to lower case (dict is already lower case)
+//        convert_to_lower(word);
+//		//Compare words for spelling match.
+//		if (strlen(line) > 0)
+//			if (strcmp(line, word) == 0)
+//				found = found + 1;
+//		fin >> line;
+//	}
+
+    convert_to_lower(word);
+    for (int i = 0; i < dictSize; i++)
+        if (strcmp(dict[i], word) == 0)
+            found = found + 1;
+
+    if (found > 0)
+        return 1;
+    else
+        return 0;
 }
 
 
