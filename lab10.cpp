@@ -143,7 +143,7 @@ int search_for_word(ifstream &fin, char *word)
 	fin >> line;
 	while (!fin.eof()) {
 		//Make sure both words are the same case.
-		convert_to_a_case(LOWER, line);
+		//convert_to_a_case(LOWER, line);     // Dict already lower case
 		convert_to_a_case(LOWER, word);
 		//Compare words for spelling match.
 		if (strlen(line) > 0)
