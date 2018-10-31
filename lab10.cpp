@@ -1,6 +1,6 @@
 //
-//optimized by:
-//date:
+//optimized by: Kenny Taylor
+//date:  10/30/18
 //
 //
 //Lab-10 framework
@@ -21,6 +21,8 @@
 #include <cctype>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -28,6 +30,8 @@ using namespace std;
 const char dictname[] = "/usr/share/dict/cracklib-small";
 int spell_check(char *, char[][50], int);
 int search_for_word(char*, char [][50], int);
+void sortDictionary(char [][50], int);
+void buildIndex(char [][50], int, int[], int[]);
 
 int main(int argc, char *argv[])
 {
@@ -37,9 +41,10 @@ int main(int argc, char *argv[])
 	}
 	
     int i = 0, dictSize;
+    int start[26], end[26];
     char fname[256];
 	char dict[100000][50], line[256];
-   
+
     // Read dictionary into an array
     ifstream din(dictname);
     if (din.fail()) {
@@ -54,6 +59,12 @@ int main(int argc, char *argv[])
 	}
     dictSize = i;
     din.close();
+
+    // Sort the dictionary
+    sortDictionary(dict, dictSize);
+
+    // Index the array
+    buildIndex(dict, dictSize, start, end);
 
     strcpy(fname, argv[1]);
 	printf("\n");
@@ -120,18 +131,20 @@ int search_for_word(char *word, char dict[][50], int dictSize)
     return 0;
 }
 
+void sortDictionary(char dict[][50], int dictSize)
+{
+    cout << "sortDictionary() called.." << endl;
+    // Need to code this
 
+}
 
+void buildIndex(char dict[][50], int dictSize, int start[], int end[])
+{
+    // Need to code this
+    //char startChar = 'a';
+    cout << "buildIndex() called.." << endl;
+    for(int i = 0; i < dictSize; i++)
+    {
 
-
-
-
-
-
-
-
-
-
-
-
-
+    } 
+}
